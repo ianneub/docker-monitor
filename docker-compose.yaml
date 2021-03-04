@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  monitor:
+    build: .
+    volumes: 
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '.:/usr/src/app'
+    environment:
+      DYNAMODB_TABLE: my_table
+      KEY: asdf
+    env_file: .env
+    network_mode: host
+    depends_on: 
+      - good
+      - bad
+
+  good:
+    build:
+      context: test
+    command: bundle exec ruby good.rb
+    volumes: 
+      - './test:/usr/src/app'
+    labels:
+      com.fenderton.shutdown_over_mem_limit: 'true'
+    deploy:
+      resources:
+        reservations:
+          memory: 128M
+
+  bad:
+    build:
+      context: test
+    command: bundle exec ruby bad.rb
+    volumes: 
+      - './test:/usr/src/app'
+    labels:
+      com.fenderton.shutdown_over_mem_limit: 'true'
+    ports:
+      - 3000
+    deploy:
+      resources:
+        reservations:
+          memory: 8M

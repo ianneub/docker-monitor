@@ -2,7 +2,11 @@
 
 # frozen_string_literal: true
 
+$stdout.sync = true
+
 require_relative './lib/docker_monitor'
+
+sleep 10
 
 puts 'Starting to monitor Docker containers...'
 
@@ -17,11 +21,14 @@ while (monitor = DockerMonitor.new)
 
     next unless mem > reservation
 
+    log = { container_id: container.id, status: 'MEMORY_LIMIT_EXCEEDED' }
+    puts log.to_json
+
     # send container command to sour the milk
     # on Prise web this will trigger the container to start returning 500 errors in the health check
     monitor.sour_container!(container)
 
-    log = { container_id: container.id, status: 'MEMORY_LIMIT_EXCEEDED' }
+    log = { container_id: container.id, status: 'SHUTDOWN' }
     puts log.to_json
   end
 

@@ -21,24 +21,24 @@ class DockerMonitor
 
   def wait_for_stop(container)
     count = 0
-    while count < 100
+    while true
       break unless Docker::Container.get(container.id).json['State']['Running']
 
       sleep 15
       yield
       count += 1
+      raise "Time out exceeded trying to stop container id: #{container.id}" if count > 100
     end
-    raise "Time out exceeded trying to stop container id: #{container.id}"
   rescue Docker::Error::NotFoundError
     true
   end
 
   def sour_container!(container)
-    port = container.json['HostConfig']['PortBindings']['3000/tcp'].first['HostPort']
+    port = container.json['NetworkSettings']['Ports']['3000/tcp'].first['HostPort']
     body = { key: ENV['KEY'] }
 
     with_marloss_locker('stop_container') do |locker|
-      res = HTTParty.post("http://localhost:#{port}/ping/shutdown", headers: { 'Accept' => 'application/json', 'Content' => 'application/json' }, body: body, verify: false )
+      res = HTTParty.post("http://localhost:#{port}/ping/shutdown", headers: { 'Accept' => 'application/json', 'Content' => 'application/json' }, body: body, verify: false)
       raise 'Could not sour the milk' unless res.code == 200
 
       wait_for_stop(container) do
@@ -52,9 +52,7 @@ class DockerMonitor
   def find_containers
     containers = []
     Docker::Container.all.each do |container|
-      container.info['Labels'].each do |label, value|
-        containers << container if label == 'com.fenderton.shutdown_over_mem_limit' && value == 'true'
-      end
+      containers << container if container.info['Labels'].filter {|label, value| label == 'com.fenderton.shutdown_over_mem_limit' && value == 'true' }.any?
     end
     containers
   end
