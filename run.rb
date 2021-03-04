@@ -4,6 +4,8 @@
 
 require_relative './lib/docker_monitor'
 
+puts 'Starting to monitor Docker containers...'
+
 while (monitor = DockerMonitor.new)
   # check if each container is over its soft memory limit
   monitor.containers.each do |container|
