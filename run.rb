@@ -30,6 +30,9 @@ while (monitor = DockerMonitor.new)
 
     log = { container_id: container.id, status: 'SHUTDOWN' }
     puts log.to_json
+
+    # stop processing containers. wait until the next iteration to continue.
+    break
   end
 
   sleep 60
