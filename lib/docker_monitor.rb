@@ -24,7 +24,7 @@ class DockerMonitor
     containers
   rescue Docker::Error::TimeoutError => e
     log = { message: "Could not find Docker containers: #{e.message}", class: e.class }
-    puts logs.to_json
+    puts log.to_json
     []
   end
 end
