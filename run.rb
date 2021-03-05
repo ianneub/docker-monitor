@@ -16,20 +16,20 @@ while (monitor = DockerMonitor.new)
     # skip this container unless mem_usage exceeds mem_reservation
     next unless container.mem_usage > container.mem_reservation
 
-    log = { container_id: container.id, task_arn: container.task_arn, status: 'MEMORY_LIMIT_EXCEEDED' }
+    log = { container_id: container.id, task_arn: container.task_arn, event: 'MEMORY_LIMIT_EXCEEDED' }
     puts log.to_json
 
     # send container command to sour the milk
     # on Prise web this will trigger the container to start returning 500 errors in the health check
     container.sour!
 
-    log = { container_id: container.id, task_arn: container.task_arn, status: 'SHUTDOWN' }
+    log = { container_id: container.id, task_arn: container.task_arn, event: 'SHUTDOWN' }
     puts log.to_json
 
     # stop processing containers. wait until the next iteration to continue.
     break
   rescue Marloss::LockNotObtainedError => e
-    log = { container_id: container.id, task_arn: container.task_arn, status: 'COULD_NOT_OBTAIN_LOCK', message: e.message, class: e.class }
+    log = { container_id: container.id, task_arn: container.task_arn, event: 'COULD_NOT_OBTAIN_LOCK', message: e.message, class: e.class }
     puts log.to_json
     break
   end
