@@ -55,5 +55,9 @@ class DockerMonitor
       containers << container if container.info['Labels'].filter {|label, value| label == 'com.fenderton.shutdown_over_mem_limit' && value == 'yes' }.any?
     end
     containers
+  rescue Docker::Error::TimeoutError => e
+    log = { message: "Could not find Docker containers: #{e.message}", class: e.class }
+    puts logs.to_json
+    []
   end
 end
