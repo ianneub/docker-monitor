@@ -13,13 +13,8 @@ sleep 5
 while (monitor = DockerMonitor.new)
   # check if each container is over its soft memory limit
   monitor.containers.each do |container|
-    # soft mem limit
-    reservation = container.json['HostConfig']['MemoryReservation']
-
-    stats = container.stats
-    mem = stats.dig('memory_stats', 'usage') - stats.dig('memory_stats', 'stats', 'cache')
-
-    next unless mem > reservation
+    # skip this container unless mem_usage exceeds mem_reservation
+    next unless container.mem_usage > container.mem_reservation
 
     log = { container_id: container.id, task_arn: container.task_arn, status: 'MEMORY_LIMIT_EXCEEDED' }
     puts log.to_json
@@ -32,6 +27,10 @@ while (monitor = DockerMonitor.new)
     puts log.to_json
 
     # stop processing containers. wait until the next iteration to continue.
+    break
+  rescue Marloss::LockNotObtainedError => e
+    log = { container_id: container.id, task_arn: container.task_arn, status: 'COULD_NOT_OBTAIN_LOCK', message: e.message, class: e.class }
+    puts log.to_json
     break
   end
 

@@ -6,6 +6,15 @@ class Docker::Container
 
   marloss_options table: ENV['DYNAMODB_TABLE'], hash_key: 'ID'
 
+  def mem_reservation
+    json['HostConfig']['MemoryReservation']
+  end
+
+  def mem_usage
+    data = stats
+    data.dig('memory_stats', 'usage') - data.dig('memory_stats', 'stats', 'cache')
+  end
+
   def task_arn
     info['Labels'].filter {|label, _| label == 'com.amazonaws.ecs.task-arn' }.first&.last
   end
@@ -14,7 +23,7 @@ class Docker::Container
     port = json['NetworkSettings']['Ports']['3000/tcp'].first['HostPort']
     body = { key: ENV['KEY'] }
 
-    with_marloss_locker('stop_container') do |locker|
+    with_marloss_locker('stop_container', retries: 1) do |locker|
       res = HTTParty.post("http://localhost:#{port}/ping/shutdown", headers: { 'Accept' => 'application/json', 'Content' => 'application/json' }, body: body, verify: false)
       raise 'Could not sour the milk' unless res.code == 200
 
