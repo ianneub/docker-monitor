@@ -22,7 +22,8 @@ services:
     volumes: 
       - './test:/usr/src/app'
     labels:
-      com.fenderton.shutdown_over_mem_limit: 'true'
+      com.fenderton.shutdown_over_mem_limit: 'yes'
+      com.amazonaws.ecs.task-arn: 'asdf-good'
     deploy:
       resources:
         reservations:
@@ -35,7 +36,8 @@ services:
     volumes: 
       - './test:/usr/src/app'
     labels:
-      com.fenderton.shutdown_over_mem_limit: 'true'
+      com.fenderton.shutdown_over_mem_limit: 'yes'
+      com.amazonaws.ecs.task-arn: 'asdf-bad'
     ports:
       - 3000
     deploy:
