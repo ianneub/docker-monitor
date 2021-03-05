@@ -47,6 +47,10 @@ class DockerMonitor
     end
   end
 
+  def task_arn(container)
+    container.info['Labels'].filter {|label, _| label == 'com.amazonaws.ecs.task-arn' }.first&.last
+  end
+
   protected
 
   def find_containers
