@@ -29,7 +29,8 @@ class Docker::Container
   def wait_for_stop
     count = 0
     while true
-      break unless Docker::Container.get(id).json['State']['Running']
+      refresh!
+      break unless json['State']['Running']
 
       sleep 15
       yield
