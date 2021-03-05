@@ -12,8 +12,10 @@ services:
     env_file: .env
     network_mode: host
     depends_on: 
-      - good
-      - bad
+      good:
+        condition: service_started
+      bad:
+        condition: service_healthy
 
   good:
     build:
@@ -40,6 +42,8 @@ services:
       com.amazonaws.ecs.task-arn: 'asdf-bad'
     ports:
       - 3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
     deploy:
       resources:
         reservations:
