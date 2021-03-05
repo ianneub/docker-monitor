@@ -6,7 +6,7 @@ $stdout.sync = true
 
 require_relative './lib/docker_monitor'
 
-sleep 10
+sleep 5
 
 puts 'Starting to monitor Docker containers...'
 
@@ -21,14 +21,14 @@ while (monitor = DockerMonitor.new)
 
     next unless mem > reservation
 
-    log = { container_id: container.id, task_arn: monitor.task_arn(container), status: 'MEMORY_LIMIT_EXCEEDED' }
+    log = { container_id: container.id, task_arn: container.task_arn, status: 'MEMORY_LIMIT_EXCEEDED' }
     puts log.to_json
 
     # send container command to sour the milk
     # on Prise web this will trigger the container to start returning 500 errors in the health check
-    monitor.sour_container!(container)
+    container.sour!
 
-    log = { container_id: container.id, task_arn: monitor.task_arn(container), status: 'SHUTDOWN' }
+    log = { container_id: container.id, task_arn: container.task_arn, status: 'SHUTDOWN' }
     puts log.to_json
 
     # stop processing containers. wait until the next iteration to continue.
