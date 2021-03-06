@@ -61,6 +61,10 @@ class Docker::Container
     res.services[0].desired_count == res.services[0].running_count
   end
 
+  def run_time
+    Time.now - Time.parse(json['State']['StartedAt'])
+  end
+
   protected
 
   def wait_for_stop(locker)

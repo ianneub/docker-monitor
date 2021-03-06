@@ -15,7 +15,7 @@ loop do
     # skip this container unless mem_usage exceeds mem_reservation
     next unless container.mem_usage > container.mem_reservation
 
-    log = { container_id: container.id, task_arn: container.task_arn, event: 'MEMORY_LIMIT_EXCEEDED' }
+    log = { container_id: container.id, task_arn: container.task_arn, event: 'MEMORY_LIMIT_EXCEEDED', duration: container.run_time }
     puts log.to_json
 
     # send container command to sour the milk
