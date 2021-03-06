@@ -11,6 +11,9 @@ GEM
     aws-sdk-dynamodb (1.59.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
+    aws-sdk-ecs (1.74.0)
+      aws-sdk-core (~> 3, >= 3.112.0)
+      aws-sigv4 (~> 1.1)
     aws-sigv4 (1.2.2)
       aws-eventstream (~> 1, >= 1.0.2)
     docker-api (2.0.0)
@@ -33,6 +36,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aws-sdk-ecs (~> 1.74)
   docker-api (~> 2.0)
   httparty (~> 0.18)
   marloss (~> 0.5)

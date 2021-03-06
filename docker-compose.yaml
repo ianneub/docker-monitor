@@ -26,6 +26,7 @@ services:
     labels:
       com.fenderton.shutdown_over_mem_limit: 'yes'
       com.amazonaws.ecs.task-arn: 'asdf-good'
+      com.amazonaws.ecs.cluster: testing
     deploy:
       resources:
         reservations:
@@ -40,6 +41,7 @@ services:
     labels:
       com.fenderton.shutdown_over_mem_limit: 'yes'
       com.amazonaws.ecs.task-arn: 'asdf-bad'
+      com.amazonaws.ecs.cluster: production
     ports:
       - 3000
     healthcheck:
