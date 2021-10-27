@@ -27,10 +27,11 @@ services:
       com.fenderton.shutdown_over_mem_limit: 'yes'
       com.amazonaws.ecs.task-arn: 'asdf-good'
       com.amazonaws.ecs.cluster: testing
-    deploy:
-      resources:
-        reservations:
-          memory: 128M
+    mem_reservation: 128M
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       memory: 128M
 
   bad:
     build:
@@ -40,13 +41,14 @@ services:
       - './test:/usr/src/app'
     labels:
       com.fenderton.shutdown_over_mem_limit: 'yes'
-      com.amazonaws.ecs.task-arn: 'asdf-bad'
+      com.amazonaws.ecs.task-arn: 'arn:aws:ecs:us-east-1:696278446003:task/production/6ae47f2d0c5a4244a6898e185eddccf0'
       com.amazonaws.ecs.cluster: production
     ports:
-      - 3000
+      - 30123:3000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
-    deploy:
-      resources:
-        reservations:
-          memory: 8M
+    mem_reservation: 8M
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       memory: 8M
