@@ -13,7 +13,14 @@ loop do
   # check if each container is over its soft memory limit
   monitor.containers.each do |container|
     # skip this container unless mem_usage exceeds mem_reservation
-    next unless container.mem_usage > container.mem_reservation
+    begin
+      next unless container.mem_usage > container.mem_reservation
+    rescue Docker::Container::UnableToRetrieveStats
+      log = { container_id: container.id, task_arn: container.task_arn, event: 'COULD_NOT_READ_STATS' }
+      puts log.to_json
+
+      next
+    end
 
     log = { container_id: container.id, task_arn: container.task_arn, event: 'MEMORY_LIMIT_EXCEEDED', duration: container.run_time * 1_000 }
     puts log.to_json

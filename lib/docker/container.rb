@@ -7,6 +7,8 @@ require 'aws-sdk-ecs'
 class Docker::Container
   include Marloss
 
+  class UnableToRetrieveStats < RuntimeError; end
+
   marloss_options table: ENV['DYNAMODB_TABLE'], hash_key: 'ID'
 
   def mem_reservation
@@ -15,6 +17,8 @@ class Docker::Container
 
   def mem_usage
     data = stats
+    raise UnableToRetrieveStats if data.nil?
+
     data.dig('memory_stats', 'usage') - data.dig('memory_stats', 'stats', 'cache')
   end
 
