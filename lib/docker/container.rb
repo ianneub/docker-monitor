@@ -17,7 +17,8 @@ class Docker::Container
 
   def mem_usage
     data = stats
-    raise UnableToRetrieveStats if data.nil?
+    raise UnableToRetrieveStats if data.dig('memory_stats', 'usage').nil?
+    raise UnableToRetrieveStats if data.dig('memory_stats', 'stats', 'cache').nil?
 
     data.dig('memory_stats', 'usage') - data.dig('memory_stats', 'stats', 'cache')
   end
