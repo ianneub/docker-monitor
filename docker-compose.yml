@@ -1,21 +1,20 @@
-version: '3.9'
-
 services:
   monitor:
     build: .
     volumes: 
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
       - '.:/usr/src/app'
-    environment:
-      DYNAMODB_TABLE: my_table
-      KEY: asdf
+    # environment:
+    #   DYNAMODB_TABLE: my_table
+    #   AWS_ACCESS_KEY_ID: asdf
+    #   AWS_SECRET_ACCESS_KEY: asdf
     env_file: .env
     network_mode: host
     depends_on: 
       good:
         condition: service_started
       bad:
-        condition: service_healthy
+        condition: service_started
 
   good:
     build:
@@ -24,14 +23,13 @@ services:
     volumes: 
       - './test:/usr/src/app'
     labels:
-      com.fenderton.shutdown_over_mem_limit: 'yes'
+      com.github.ianneub.docker-monitor.shutdown_over_mem_limit: 'yes'
       com.amazonaws.ecs.task-arn: 'asdf-good'
       com.amazonaws.ecs.cluster: testing
-    mem_reservation: 128M
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       memory: 128M
+    deploy:
+      resources:
+        reservations:
+          memory: 128M
 
   bad:
     build:
@@ -40,15 +38,12 @@ services:
     volumes: 
       - './test:/usr/src/app'
     labels:
-      com.fenderton.shutdown_over_mem_limit: 'yes'
-      com.amazonaws.ecs.task-arn: 'arn:aws:ecs:us-east-1:696278446003:task/production/6ae47f2d0c5a4244a6898e185eddccf0'
+      com.github.ianneub.docker-monitor.shutdown_over_mem_limit: 'yes'
+      com.amazonaws.ecs.task-arn: 'arn:aws:ecs:us-east-1:123456789123:task/production/12345678901234567890123456789012'
       com.amazonaws.ecs.cluster: production
     ports:
       - 30123:3000
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
-    mem_reservation: 8M
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       memory: 8M
+    deploy:
+      resources:
+        reservations:
+          memory: 8M
