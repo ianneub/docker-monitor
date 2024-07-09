@@ -19,7 +19,7 @@ class DockerMonitor
   def find_containers
     containers = []
     Docker::Container.all.each do |container|
-      containers << container if container.info['Labels'].filter {|label, value| label == 'com.fenderton.shutdown_over_mem_limit' && value == 'yes' }.any?
+      containers << container if container.info['Labels'].filter {|label, value| label == 'com.github.ianneub.docker-monitor.shutdown_over_mem_limit' && value == 'yes' }.any?
     end
     containers
   rescue Docker::Error::TimeoutError => e

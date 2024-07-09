@@ -25,9 +25,8 @@ loop do
     log = { container_id: container.id, task_arn: container.task_arn, event: 'MEMORY_LIMIT_EXCEEDED', duration: container.run_time * 1_000 }
     puts log.to_json
 
-    # send container command to sour the milk
-    # on Prise web this will trigger the container to start returning 500 errors in the health check
-    container.sour!
+    # send container command to stop the container
+    container.stop!
 
     log = { container_id: container.id, task_arn: container.task_arn, event: 'SHUTDOWN' }
     puts log.to_json

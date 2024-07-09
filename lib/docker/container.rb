@@ -18,9 +18,8 @@ class Docker::Container
   def mem_usage
     data = stats
     raise UnableToRetrieveStats if data.dig('memory_stats', 'usage').nil?
-    raise UnableToRetrieveStats if data.dig('memory_stats', 'stats', 'cache').nil?
 
-    data.dig('memory_stats', 'usage') - data.dig('memory_stats', 'stats', 'cache')
+    data.dig('memory_stats', 'usage')
   end
 
   def task_arn
@@ -31,13 +30,15 @@ class Docker::Container
     json['State']['Running']
   end
 
-  def sour!
-    port = json['NetworkSettings']['Ports']['3000/tcp'].first['HostPort']
-    body = { key: ENV['KEY'] }
-
+  def stop!
     with_marloss_locker('stop_container', retries: 1) do |locker|
-      res = HTTParty.post("http://localhost:#{port}/ping/shutdown", headers: { 'Accept' => 'application/json', 'Content' => 'application/json' }, body: body, verify: false)
-      raise 'Could not sour the milk' unless res.code == 200
+      # stop the container
+      client = Aws::ECS::Client.new
+      client.stop_task({
+                          cluster: ecs_cluster,
+                          task:    task_arn,
+                          reason:  'Container over memory limit. Stopping to prevent OOM error.',
+                        })
 
       wait_for_stop(locker)
       wait_for_healthy_ecs_cluster(locker)
