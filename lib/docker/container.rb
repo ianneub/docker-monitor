@@ -26,6 +26,10 @@ class Docker::Container
     info['Labels'].filter {|label, _| label == 'com.amazonaws.ecs.task-arn' }.first&.last
   end
 
+  def task_definition_family
+    info['Labels'].filter {|label, _| label == 'com.amazonaws.ecs.task-definition-family' }.first&.last
+  end
+
   def running?
     json['State']['Running']
   end

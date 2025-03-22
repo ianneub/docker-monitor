@@ -26,6 +26,7 @@ services:
       com.github.ianneub.docker-monitor.shutdown_over_mem_limit: 'yes'
       com.amazonaws.ecs.task-arn: 'asdf-good'
       com.amazonaws.ecs.cluster: testing
+      com.amazonaws.ecs.task-definition-family: worker
     deploy:
       resources:
         reservations:
@@ -41,6 +42,7 @@ services:
       com.github.ianneub.docker-monitor.shutdown_over_mem_limit: 'yes'
       com.amazonaws.ecs.task-arn: 'arn:aws:ecs:us-east-1:123456789123:task/production/12345678901234567890123456789012'
       com.amazonaws.ecs.cluster: production
+      com.amazonaws.ecs.task-definition-family: worker
     ports:
       - 30123:3000
     deploy:
