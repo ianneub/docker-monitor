@@ -1,7 +1,7 @@
 # Rubocop custom config file
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.4
   Exclude:
     - db/**/*
 

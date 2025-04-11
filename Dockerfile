@@ -1,4 +1,4 @@
-FROM ruby:2.6
+FROM ruby:3.4
 
 ENV AWS_DEFAULT_REGION=us-east-1
 
