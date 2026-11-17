@@ -1,0 +1,20 @@
+[package]
+name = "docker-monitor"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+anyhow = "1"
+aws-config = { version = "1.13", features = ["behavior-version-latest"] }
+aws-sdk-dynamodb = "1.139"
+aws-sdk-ecs = "1.160"
+bollard = "0.21"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+futures-util = { version = "0.3", default-features = false }
+gethostname = "1"
+serde_json = { version = "1", features = ["preserve_order"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
+
+[profile.release]
+strip = true

@@ -1,3 +1,4 @@
 .env
+.git
+target/
 test/
-docker-componse.yaml

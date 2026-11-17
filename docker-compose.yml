@@ -3,7 +3,6 @@ services:
     build: .
     volumes: 
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
-      - '.:/usr/src/app'
     # environment:
     #   DYNAMODB_TABLE: my_table
     #   AWS_ACCESS_KEY_ID: asdf
@@ -17,9 +16,10 @@ services:
         condition: service_started
 
   good:
-    build:
-      context: test
-    command: bundle exec ruby good.rb
+    # memory-usage fixture; plain Ruby script, no gems
+    image: ruby:3.4-slim
+    working_dir: /usr/src/app
+    command: ruby good.rb
     volumes: 
       - './test:/usr/src/app'
     labels:
@@ -33,9 +33,10 @@ services:
           memory: 128M
 
   bad:
-    build:
-      context: test
-    command: bundle exec ruby bad.rb
+    # memory-usage fixture; plain Ruby script, no gems
+    image: ruby:3.4-slim
+    working_dir: /usr/src/app
+    command: ruby bad.rb
     volumes: 
       - './test:/usr/src/app'
     labels:
