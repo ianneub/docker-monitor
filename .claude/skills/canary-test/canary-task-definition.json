@@ -1,0 +1,14 @@
+{
+  "family": "docker-monitor-canary",
+  "networkMode": "bridge",
+  "requiresCompatibilities": ["EC2"],
+  "containerDefinitions": [{
+    "name": "canary",
+    "image": "public.ecr.aws/docker/library/python:3.13-alpine",
+    "essential": true,
+    "memoryReservation": 32,
+    "memory": 256,
+    "command": ["python3", "-u", "-c", "import time; b = b'\\x01' * (150 << 20); print('canary holding 150 MiB', flush=True); time.sleep(3600)"],
+    "dockerLabels": {"com.github.ianneub.docker-monitor.shutdown_over_mem_limit": "yes"}
+  }]
+}
